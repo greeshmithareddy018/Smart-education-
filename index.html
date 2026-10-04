@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#1769ff">
+<title>Smart Education</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#eef3f9;color:#14213d}
+button,input{font:inherit}
+.app{max-width:430px;margin:auto;min-height:100vh;background:#fff;position:relative;box-shadow:0 0 25px #cbd5e1}
+.screen{display:none;min-height:100vh;padding-bottom:82px}
+.screen.active{display:block}
+.top{padding:22px 20px 12px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:22px;font-weight:800;color:#1769ff}
+.muted{color:#718096;font-size:13px}
+h1{font-size:25px;margin:8px 0}
+h2{font-size:19px;margin:18px 0 10px}
+h3{font-size:16px;margin:6px 0}
+.search{margin:10px 20px;padding:13px 15px;border:1px solid #dbe3ef;border-radius:14px;background:#f7f9fc;outline:none;width:calc(100% - 40px)}
+.hero{margin:12px 20px;padding:22px;border-radius:20px;background:linear-gradient(135deg,#1769ff,#4f9cff);color:white}
+.hero h1{color:white;margin:0 0 8px}
+.hero p{margin:0 0 16px;line-height:1.4}
+.btn{border:0;border-radius:12px;padding:12px 18px;background:#1769ff;color:#fff;font-weight:700;cursor:pointer}
+.btn.light{background:#fff;color:#1769ff}
+.btn.outline{background:#fff;color:#1769ff;border:1px solid #1769ff}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:0 20px}
+.card{border:1px solid #e2e8f0;border-radius:16px;padding:15px;background:#fff;box-shadow:0 4px 12px #e8edf5}
+.icon{font-size:26px;margin-bottom:8px}
+.course{display:flex;align-items:center;gap:13px;padding:15px;margin:10px 20px;border:1px solid #e2e8f0;border-radius:16px;cursor:pointer}
+.course .icon{margin:0}
+.badge{display:inline-block;padding:6px 10px;border-radius:20px;background:#eaf2ff;color:#1769ff;font-size:12px;font-weight:700}
+.progress{height:8px;background:#e7edf5;border-radius:10px;overflow:hidden;margin-top:9px}
+.progress span{display:block;height:100%;background:#1769ff;border-radius:10px}
+.library-item{display:flex;align-items:center;gap:12px;padding:14px 20px;border-bottom:1px solid #edf1f6}
+.fileicon{width:42px;height:42px;border-radius:12px;background:#ffe8e8;display:grid;place-items:center}
+.chat{padding:0 20px}
+.bot{background:#eef5ff;padding:14px;border-radius:16px 16px 16px 4px;margin:12px 0;line-height:1.45}
+.user{background:#1769ff;color:#fff;padding:12px;border-radius:16px 16px 4px 16px;margin:12px 0;margin-left:55px}
+.chatrow{display:flex;gap:8px;position:fixed;bottom:68px;left:50%;transform:translateX(-50%);width:min(390px,calc(100% - 30px));background:#fff;padding:8px;border-top:1px solid #eee}
+.chatrow input{flex:1;padding:12px;border:1px solid #dbe3ef;border-radius:12px}
+.profile{padding:18px 20px}
+.avatar{width:78px;height:78px;border-radius:50%;background:#dbeafe;display:grid;place-items:center;font-size:36px;margin-bottom:10px}
+.menu{border:1px solid #e2e8f0;border-radius:16px;overflow:hidden;margin-top:18px}
+.menu div{padding:16px;border-bottom:1px solid #edf1f6;cursor:pointer}
+.menu div:last-child{border:0}
+.bottom{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:min(430px,100%);height:68px;background:#fff;border-top:1px solid #e2e8f0;display:flex;justify-content:space-around;align-items:center;z-index:20}
+.nav{border:0;background:none;color:#718096;font-size:11px;cursor:pointer}
+.nav strong{display:block;font-size:21px}
+.nav.active{color:#1769ff}
+.login{padding:55px 28px;min-height:100vh;display:flex;flex-direction:column;justify-content:center}
+.logo{font-size:55px;text-align:center;margin-bottom:10px}
+.login h1{text-align:center}
+.login input{width:100%;padding:14px;margin:7px 0;border:1px solid #dbe3ef;border-radius:12px}
+.full{width:100%;margin-top:10px}
+.back{border:0;background:none;font-size:25px;cursor:pointer}
+.detail{padding:20px}
+.lesson{padding:14px;border:1px solid #e2e8f0;border-radius:14px;margin:10px 0}
+.smallbtn{padding:8px 12px;border:0;border-radius:10px;background:#eaf2ff;color:#1769ff;font-weight:700}
+.toast{position:fixed;top:20px;left:50%;transform:translateX(-50%);background:#14213d;color:white;padding:12px 18px;border-radius:12px;display:none;z-index:50}
+@media(min-width:600px){body{padding:20px}.app{border-radius:24px;overflow:hidden}}
+</style>
+</head>
+<body>
+<div class="app">
+
+<section id="login" class="screen active">
+<div class="login">
+<div class="logo">🎓</div>
+<h1>Smart Education</h1>
+<p class="muted" style="text-align:center">Learn • Grow • Achieve</p>
+<input id="email" placeholder="Email or mobile number">
+<input id="password" type="password" placeholder="Password">
+<button class="btn full" onclick="login()">Login</button>
+<button class="btn outline full" onclick="demoLogin()">Try Demo</button>
+<p class="muted" style="text-align:center;margin-top:20px">Your personal learning companion</p>
+</div>
+</section>
+
+<section id="home" class="screen">
+<div class="top"><div><div class="muted">Welcome back</div><h1>Hi, Student! 👋</h1></div><span style="font-size:24px">🔔</span></div>
+<input class="search" placeholder="🔍 Search courses, notes, videos..." oninput="filterCourses(this.value)">
+<div class="hero"><h1>Better Learning<br>Brighter Future</h1><p>Find courses, notes and instant help in one place.</p><button class="btn light" onclick="show('courses')">Explore Courses</button></div>
+<h2 style="padding:0 20px">Quick Access</h2>
+<div class="grid">
+<div class="card" onclick="show('courses')"><div class="icon">📚</div><b>Courses</b><div class="muted">Learn subjects</div></div>
+<div class="card" onclick="show('library')"><div class="icon">📖</div><b>Digital Library</b><div class="muted">Notes & PDFs</div></div>
+<div class="card" onclick="show('ai')"><div class="icon">🤖</div><b>Ask AI</b><div class="muted">Solve doubts</div></div>
+<div class="card" onclick="show('progress')"><div class="icon">📊</div><b>My Progress</b><div class="muted">Track learning</div></div>
+</div>
+<h2 style="padding:0 20px">Continue Learning</h2>
+<div class="course" onclick="openCourse('Mathematics')"><div class="icon">🔢</div><div style="flex:1"><h3>Mathematics</h3><div class="muted">Chapter 2 • Algebra</div><div class="progress"><span style="width:70%"></span></div></div><span>›</span></div>
+</section>
+
+<section id="courses" class="screen">
+<div class="top"><button class="back" onclick="show('home')">‹</button><h1 style="margin:0">Courses</h1><span>🔍</span></div>
+<div id="courseList"></div>
+</section>
+
+<section id="courseDetail" class="screen">
+<div class="top"><button class="back" onclick="show('courses')">‹</button><h1 id="courseTitle" style="margin:0">Course</h1><span>⋮</span></div>
+<div class="detail">
+<span class="badge">Learning Path</span>
+<p class="muted" id="courseDesc"></p>
+<h2>Chapters</h2>
+<div class="lesson">📘 Chapter 1 — Introduction <button class="smallbtn" style="float:right" onclick="completeLesson()">Start</button></div>
+<div class="lesson">📘 Chapter 2 — Core Concepts <button class="smallbtn" style="float:right" onclick="completeLesson()">Start</button></div>
+<div class="lesson">📘 Chapter 3 — Practice <button class="smallbtn" style="float:right" onclick="completeLesson()">Start</button></div>
+<div class="lesson">📝 Quiz & Assessment <button class="smallbtn" style="float:right" onclick="toast('Quiz opened')">Open</button></div>
+</div>
+</section>
+
+<section id="library" class="screen">
+<div class="top"><button class="back" onclick="show('home')">‹</button><h1 style="margin:0">Digital Library</h1><span>🔍</span></div>
+<div style="padding:0 20px"><span class="badge">All</span> <span class="badge" style="background:#f3f4f6;color:#555">Notes</span> <span class="badge" style="background:#f3f4f6;color:#555">Videos</span> <span class="badge" style="background:#f3f4f6;color:#555">E-Books</span></div>
+<div id="libraryList"></div>
+</section>
+
+<section id="ai" class="screen">
+<div class="top"><button class="back" onclick="show('home')">‹</button><h1 style="margin:0">Ask AI</h1><span>🤖</span></div>
+<div class="chat" id="chat">
+<div class="bot"><b>🤖 AI Assistant</b><br>Hi! Ask me a study question. I'll help you understand it step by step.</div>
+<div class="bot">Try: <b>What is photosynthesis?</b> or <b>Explain algebra.</b></div>
+</div>
+<div class="chatrow"><input id="question" placeholder="Type your question..."><button class="btn" onclick="askAI()">➤</button></div>
+</section>
+
+<section id="progress" class="screen">
+<div class="top"><button class="back" onclick="show('home')">‹</button><h1 style="margin:0">My Progress</h1><span>📈</span></div>
+<div style="padding:20px">
+<div class="card"><div style="font-size:36px;font-weight:800;color:#1769ff">68%</div><b>Overall Completion</b><p class="muted">17 of 25 lessons completed</p><div class="progress"><span style="width:68%"></span></div></div>
+<h2>Subject Progress</h2>
+<div class="lesson">🔢 Mathematics <div class="progress"><span style="width:80%"></span></div><small>80%</small></div>
+<div class="lesson">⚛️ Physics <div class="progress"><span style="width:60%"></span></div><small>60%</small></div>
+<div class="lesson">🧪 Chemistry <div class="progress"><span style="width:50%"></span></div><small>50%</small></div>
+<div class="lesson">💻 Computer Science <div class="progress"><span style="width:40%"></span></div><small>40%</small></div>
+</div>
+</section>
+
+<section id="profile" class="screen">
+<div class="top"><h1 style="margin:0">Profile</h1><span>⚙️</span></div>
+<div class="profile">
+<div class="avatar">👤</div><h2 style="margin:5px 0">Student</h2><div class="muted">student@example.com</div>
+<div class="menu">
+<div>👤 My Details <span style="float:right">›</span></div>
+<div>📚 My Courses <span style="float:right">›</span></div>
+<div>⬇️ Downloads <span style="float:right">›</span></div>
+<div>🔔 Notifications <span style="float:right">›</span></div>
+<div>⚙️ Settings <span style="float:right">›</span></div>
+<div>❓ Help & Support <span style="float:right">›</span></div>
+</div>
+<button class="btn outline full" onclick="logout()">Logout</button>
+</div>
+</section>
+
+<div class="bottom" id="nav">
+<button class="nav active" onclick="show('home')"><strong>⌂</strong>Home</button>
+<button class="nav" onclick="show('courses')"><strong>▣</strong>Courses</button>
+<button class="nav" onclick="show('library')"><strong>▤</strong>Library</button>
+<button class="nav" onclick="show('ai')"><strong>◉</strong>AI</button>
+<button class="nav" onclick="show('profile')"><strong>♙</strong>Profile</button>
+</div>
+<div class="toast" id="toast"></div>
+</div>
+
+<script>
+const courses=[
+{name:'Mathematics',icon:'🔢',desc:'Algebra, Geometry and Calculus',progress:80},
+{name:'Physics',icon:'⚛️',desc:'Mechanics, Electricity and Modern Physics',progress:60},
+{name:'Chemistry',icon:'🧪',desc:'Organic, Inorganic and Physical Chemistry',progress:50},
+{name:'English',icon:'📚',desc:'Grammar, Literature and Writing',progress:70},
+{name:'Computer Science',icon:'💻',desc:'Programming and Data Structures',progress:40}
+];
+const files=[
+['📕','Mathematics - Chapter 1 Notes','PDF • 2.4 MB'],
+['📕','Physics - Formula Sheet','PDF • 1.8 MB'],
+['📕','Chemistry - Important Reactions','PDF • 2.1 MB'],
+['📕','Study Tips for Exams','PDF • 1.2 MB'],
+['▶️','Algebra Video Lecture','Video • 45 min'],
+['📗','Organic Chemistry eBook','E-Book • 5.6 MB']
+];
+
+function show(id){
+document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+document.getElementById(id).classList.add('active');
+document.getElementById('nav').style.display=(id==='login'||id==='courseDetail')?'none':'flex';
+document.querySelectorAll('.nav').forEach(n=>n.classList.remove('active'));
+const map={home:0,courses:1,library:2,ai:3,profile:4,progress:0};
+if(map[id]!==undefined) document.querySelectorAll('.nav')[map[id]].classList.add('active');
+window.scrollTo(0,0);
+}
+function login(){show('home')}
+function demoLogin(){document.getElementById('email').value='demo@student.com';document.getElementById('password').value='••••••••';show('home')}
+function logout(){show('login')}
+function openCourse(name){
+const c=courses.find(x=>x.name===name)||courses[0];
+document.getElementById('courseTitle').textContent=c.name;
+document.getElementById('courseDesc').textContent=c.desc+' • Current progress: '+c.progress+'%';
+show('courseDetail');
+}
+function renderCourses(list=courses){
+document.getElementById('courseList').innerHTML=list.map(c=>`
+<div class="course" onclick="openCourse('${c.name}')"><div class="icon">${c.icon}</div>
+<div style="flex:1"><h3>${c.name}</h3><div class="muted">${c.desc}</div><div class="progress"><span style="width:${c.progress}%"></span></div></div><span>›</span></div>`).join('');
+}
+function filterCourses(q){renderCourses(courses.filter(c=>c.name.toLowerCase().includes(q.toLowerCase())||c.desc.toLowerCase().includes(q.toLowerCase())))}
+function renderLibrary(){
+document.getElementById('libraryList').innerHTML=files.map(f=>`<div class="library-item"><div class="fileicon">${f[0]}</div><div style="flex:1"><b>${f[1]}</b><div class="muted">${f[2]}</div></div><button class="smallbtn" onclick="toast('Opening ${f[1]}')">Open</button></div>`).join('');
+}
+function askAI(){
+const input=document.getElementById('question'); const q=input.value.trim(); if(!q)return;
+const chat=document.getElementById('chat');
+chat.innerHTML+=`<div class="user">${q}</div>`;
+let a='I can help you study. Try asking about a concept, formula, definition, or example.';
+if(/photosynthesis/i.test(q)) a='Photosynthesis is the process by which green plants use sunlight, carbon dioxide and water to make glucose and release oxygen.';
+else if(/algebra/i.test(q)) a='Algebra uses letters and symbols to represent unknown values. For example, in x + 5 = 10, x = 5.';
+else if(/java/i.test(q)) a='Java is an object-oriented programming language. Common concepts include classes, objects, constructors, inheritance and methods.';
+chat.innerHTML+=`<div class="bot"><b>🤖 AI Assistant</b><br>${a}</div>`;
+input.value=''; window.scrollTo(0,document.body.scrollHeight);
+}
+function completeLesson(){toast('Lesson marked as completed!');}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.display='block';setTimeout(()=>t.style.display='none',1800)}
+renderCourses();renderLibrary();
+</script>
+</body>
+</html>
